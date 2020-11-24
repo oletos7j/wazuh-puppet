@@ -243,6 +243,7 @@ class wazuh::agent (
 
   # Logging
   $logging_log_format                = $wazuh::params_agent::logging_log_format,
+
 ) inherits wazuh::params_agent {
   # validate_bool(
   #   $ossec_active_response, $ossec_rootcheck,
@@ -253,15 +254,16 @@ class wazuh::agent (
   validate_string($agent_package_name)
   validate_string($agent_service_name)
 
-  if (( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' )) {
-    class { 'wazuh::audit':
-      audit_manage_rules      => $audit_manage_rules,
-      audit_backlog_wait_time => $audit_backlog_wait_time,
-      audit_buffer_bytes      => $audit_buffer_bytes,
-      audit_rules             => $audit_rules,
+  unless $facts[$::kernel]['Linux'] {
+    if (( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' )) {
+      class { 'wazuh::audit':
+        audit_manage_rules      => $audit_manage_rules,
+        audit_backlog_wait_time => $audit_backlog_wait_time,
+        audit_buffer_bytes      => $audit_buffer_bytes,
+        audit_rules             => $audit_rules,
+      }
     }
   }
-
 
   if $manage_client_keys == 'yes' {
     if $wazuh_register_endpoint == undef {
