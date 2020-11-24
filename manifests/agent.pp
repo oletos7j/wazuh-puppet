@@ -254,7 +254,7 @@ class wazuh::agent (
   validate_string($agent_package_name)
   validate_string($agent_service_name)
 
-  unless $facts[$::kernel]['Linux'] {
+  unless $facts['kernel'] == 'windows' {
     if (( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' )) {
       class { 'wazuh::audit':
         audit_manage_rules      => $audit_manage_rules,
